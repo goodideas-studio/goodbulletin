@@ -20,7 +20,7 @@
         --><li class="finished" @click="showFinished()" :class="{backgroundChange:finishedChange}">已結束活動</li><!--
         --><li class="unfinished" @click="showUnfinished()" :class="{backgroundChange:unfinishedChange}">未開始活動</li>
       </ul>
-      <a href="https://devche.com/#/">
+      <a href="https://devche.com/goodideabillboard/backstage">
         <button type="button" class="issue"  @mouseover="toggleShake()" @mouseleave="toggleShake()" :class="{shake:shaking}">發佈活動</button>
       </a>
       <div class="courseList">
