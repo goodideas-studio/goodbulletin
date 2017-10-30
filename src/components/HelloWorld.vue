@@ -1,5 +1,5 @@
 <template>
-  <div class="goodIdea container-fluid">
+  <div class="goodIdea">
     <div class="banner">
       <img class="basePicture" src="../assets/底圖.png" alt="goodidea">
       <div class="backgroundBlack"></div>
@@ -173,12 +173,14 @@ $(".navButton").click(function(){
 *
   margin: 0
   padding: 0
+.goodidea
+  width: 100%
 .banner
   position: relative
   height: 33.7vw
   margin-bottom: 5vw
   .basePicture
-    width: auto
+    width: 100%
     height: 100%
   .backgroundBlack
     position: absolute
