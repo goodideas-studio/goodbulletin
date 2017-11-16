@@ -43,6 +43,9 @@
           </div>
         </div>
       </div>
+      <div class="moveToTop" @click="moveToTop()">
+        <i class="fa fa-chevron-circle-up" aria-hidden="true"></i>
+      </div>
     </content>
     <footer>
       <p>Copyright © 2017 <a href="http://goodideas-studio.com/">好想工作室</a><br>All Rights Reserved</p>
@@ -70,12 +73,10 @@ export default {
       fetch('https://devche.com/api/speech/data')
         .then((res) => {res.json()
           .then((data) => {
-          // this.courses = data.result
-          // var courseList = this.courses
           var courseList = data.result
           for (let i =0; i<courseList.length; i++){
-            // this.$set(this.courses[i],'view',true)
             courseList[i].view = true
+
             var nowTime = new Date()
             var speechDate = courseList[i].speech_date
             var classDate = new Date(speechDate)
@@ -84,12 +85,13 @@ export default {
             }else{
               courseList[i].course_status = '已經結束'
             }
-            if(courseList[i].link == 'null'){
+            if(courseList[i].link === "null" || courseList[i].link === null){
               courseList[i].showLink = false
             }else{
               courseList[i].showLink = true
             }
           }
+
           courseList.sort(function (a, b) {
             if (a.speech_date > b.speech_date) {
               return -1
@@ -151,11 +153,17 @@ export default {
     toggleShake(){
       if(this.shaking == false){
         this.shaking = true
-        console.log(this.shaking)
       }else{
         this.shaking =false
-        console.log(this.shaking)
       }
+    },
+    // moveToTop(){
+    //   window.scrollTo(0, 0);
+    // }
+    moveToTop(){
+      jQuery("html,body").animate({
+          scrollTop:0
+      },500)
     }
   }
 }
@@ -163,6 +171,14 @@ $(document).ready(function(){
 $(".navButton").click(function(){
     $(".navList").slideToggle("slow");
   });
+});
+
+$(window).scroll(function() {
+    if ( $(this).scrollTop() > 300){
+        $('.moveToTop').fadeIn("fast");
+    } else {
+        $('.moveToTop').stop().fadeOut("fast");
+    }
 });
 
 </script>
@@ -290,6 +306,7 @@ content
     .backgroundChange
       background-color: #0f375b
       color: white
+      font-weight: bold
     li
       width: 33.3333%
       padding: 5px
@@ -330,7 +347,7 @@ content
       .courseInformation
         position: relative
         margin-left: auto
-        padding: 5px
+        padding: 5px 5px 40px 5px
         width: 76%
         text-align: left
         background-color: rgba(30,139,166,0.1)
@@ -354,7 +371,7 @@ content
           img,h5
             display: inline-block
           img
-            width: 4vw
+            width: 50px
             height: auto
             border-radius: 50%
             margin: 0.5vw 1vw 0 1vw
@@ -365,6 +382,9 @@ content
           text-align: justify
           margin: 0.5vw 1vw
           font-size: 18px
+          height: 60px
+          overflow: auto
+          white-space: pre-wrap
         .speechDate
           display: inline
           color: #1e8ba6
@@ -381,6 +401,31 @@ content
           right: 1vw
           bottom: 1vw
           cursor: pointer
+  .moveToTop
+    position: fixed
+    right: 2%
+    bottom: 10%
+    font-size: 50px
+    color: rgba(30,139,166,0.56)
+    cursor: pointer
+    animation-name: moveToTop
+    animation-duration: 2000ms
+    animation-timing-function: ease-in-out
+    animation-iteration-count: infinite
+    @keyframes moveToTop
+      20%
+        transform: translateY(-5px)
+      40%
+        transform: translateY(5px)
+      60%
+        transform: translateY(0)
+      80%
+        transform: translateY(0)
+      0%, 100%
+        transform: translateY(0)
+    @media(max-width: 768px)
+      right: 1%
+
 footer
   background-color: rgba(30,139,166,0.56)
   margin-top: 2vw
