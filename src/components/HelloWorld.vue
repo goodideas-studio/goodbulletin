@@ -17,29 +17,27 @@
       </button>
       <ul class="navList">
         <li class="all" @click="showAll()" :class="{backgroundChange:allChange}">全部活動</li><!--
-        --><li class="finished" @click="showFinished()" :class="{backgroundChange:finishedChange}">已結束活動</li><!--
-        --><li class="unfinished" @click="showUnfinished()" :class="{backgroundChange:unfinishedChange}">未開始活動</li>
+        --><li class="unfinished" @click="showUnfinished()" :class="{backgroundChange:unfinishedChange}">即將開始活動</li><!--
+        --><li class="finished" @click="showFinished()" :class="{backgroundChange:finishedChange}">已經結束活動</li>
       </ul>
       <a href="https://devche.com/goodideabillboard/backstage">
-        <button type="button" class="issue"  @mouseover="toggleShake()" @mouseleave="toggleShake()" :class="{shake:shaking}">發佈活動</button>
+        <button type="button" class="issue"  @mouseover="toggleShake()" @mouseleave="toggleShake()" :class="{shake:shaking}">發佈/管理活動</button>
       </a>
       <div class="courseList">
-        <div class="row">
-          <div v-for="course in courses"  v-show="course.view"  class="course">
-            <img :src="course.class_img" alt=""><!--
-            --><div class="courseInformation">
-              <h4>{{course.title}}</h4>
-              <span class="courseStatus">{{course.course_status}}</span>
-              <p class="speechDate">{{course.speech_date}}</p> 
-              <div class="speaker">
-                <img :src="course.speaker_img" alt="">
-                <h5>{{course.speaker}}</h5>
-              </div>
-              <p>{{course.message}}</p>
-              <a :href="course.link" v-if="course.showLink">
-                <button type="button" class="handoutLink">內容連結</button>
-              </a>
+        <div v-for="course in courses"  v-show="course.view"  class="course">
+          <img :src="course.class_img" alt=""><!--
+          --><div class="courseInformation">
+            <a :href="course.link"><h4 class="courseTitle">{{course.title}}</h4></a>
+            <span class="courseStatus" :style="{ backgroundColor: course.courseStatusColor }">{{course.courseStatus}}</span>
+            <p class="speechDate">{{course.speech_date}}</p> 
+            <div class="speaker">
+              <img :src="course.speaker_img" alt="">
+              <h5>{{course.speaker}}</h5>
             </div>
+            <p class="courseContent">{{course.message}}</p>
+            <!-- <a :href="course.link" v-if="course.showLink">
+              <button type="button" class="handoutLink">內容連結</button>
+            </a> -->
           </div>
         </div>
       </div>
@@ -80,10 +78,21 @@ export default {
             var nowTime = new Date()
             var speechDate = courseList[i].speech_date
             var classDate = new Date(speechDate)
-            if(classDate > nowTime){
-              courseList[i].course_status = '即將開始'
+
+            Date.prototype.getWeek = function() {
+              var jan4th = new Date(this.getFullYear(),0,4)
+              return Math.ceil((((this - jan4th) / 86400000) + jan4th.getDay()+1)/7)
+            }
+
+            if(classDate.getWeek() == nowTime.getWeek()){
+              courseList[i].courseStatus = '本週活動'
+              courseList[i].courseStatusColor = '#5d9c6c'
+            }else if(classDate > nowTime){
+              courseList[i].courseStatus = '即將開始'
+              courseList[i].courseStatusColor = '#1e8ba6'
             }else{
-              courseList[i].course_status = '已經結束'
+              courseList[i].courseStatus = '已經結束'
+              courseList[i].courseStatusColor = '#7a062e'
             }
             if(courseList[i].link === "null" || courseList[i].link === null){
               courseList[i].showLink = false
@@ -93,13 +102,14 @@ export default {
           }
 
           courseList.sort(function (a, b) {
-            if (a.speech_date > b.speech_date) {
-              return -1
-            }
-            if (a.speech_date < b.speech_date) {
-              return 1
-            }
-            return 0
+            return new Date(b.speech_date) - new Date(a.speech_date)
+            // if (a.speech_date > b.speech_date) {
+            //   return -1
+            // }
+            // if (a.speech_date < b.speech_date) 
+            //   return 1
+            // }
+            // return 0
           })
           this.courses = courseList
         })
@@ -251,7 +261,7 @@ $(window).scroll(function() {
     z-index: 6
 
 content
-  width: 86%
+  width: 77%
   margin: auto
   position: relative
   h2
@@ -262,7 +272,7 @@ content
       width: 100%
     .issue
       font-size: 24px
-      width: 150px
+      width: 196px
       height: 40px
       background-color: #1e8ba6
       color: white
@@ -324,7 +334,7 @@ content
       border-radius: 14px 0 0 14px
       @media(max-width: 768px)
         border-radius: 14px 14px 0 0
-    .unfinished
+    .finished
       border-radius: 0 14px 14px 0
       @media(max-width: 768px)
         border-radius: 0 0 14px 14px
@@ -334,40 +344,45 @@ content
     width: 100%
     .course
       width: 100%
-      margin: 15px 0
+      margin: 10px 0
       text-align: left
-      min-height: 20vw
+      height: 140px
       img, .courseInformation
         display: inline-block
         vertical-align: top
       img
-        width: 22%
-        height: auto
-        margin-right: 2%
+        width: 140px
+        height: 140px
+        margin-right: 10px
       .courseInformation
         position: relative
         margin-left: auto
-        padding: 5px 5px 40px 5px
-        width: 76%
+        padding: 5px 5px 40px 17px
+        width: calc(100% - 150px)
         text-align: left
         background-color: rgba(30,139,166,0.1)
-        min-height: 19vw
+        height: 140px
         @media(max-width: 768px)
           padding-bottom: 40px
         .courseStatus
-          font-size: 20px
-          color: #1e8ba6
+          font-size: 18px
+          color: #fff
           font-weight: bold
           position: absolute
-          right: 1vw
-          top: 0.5vw
-          @media(max-width: 768px)
-            top: 80%
-            left: 1vw
-        h4
-          margin: 1vw 0 0 1vw
+          height: 100%
+          width: 40px
+          text-align: center
+          padding: 0 7px
+          // background-color: blue
+          -webkit-writing-mode: vertical-rl
+          right: 0
+          top: 0
+        .courseTitle
+          font-size: 20px
+          margin-top: 9px
           color: #7a062e
         .speaker
+          width: 240px
           img,h5
             display: inline-block
           img
@@ -378,15 +393,20 @@ content
           h5
             color: #0f375b
             line-height: 5vw
-        p
+            font-size: 20px
+        .speaker, .courseContent
+          display: inline-block
+          vertical-align: middle
+        .courseContent
+          display: inline-block
           text-align: justify
           margin: 0.5vw 1vw
           font-size: 18px
           height: 60px
+          width: calc(100% - 300px)
           overflow: auto
           white-space: pre-wrap
         .speechDate
-          display: inline
           color: #1e8ba6
           font-size: 18px
         .handoutLink
